@@ -1,0 +1,22 @@
+
+jqMosaic
+=====
+
+Very fast, modular job queues. Written entirely in Java no dependencies.
+
+
+Job queue performance. Measured by incrementing an AtomicLong within each job. See MultiThreadedSchedulerPerfTests for
+the code. Java Executors were very slow in these tests because they did not scale out across the 8 cores of the referance
+machine very well. Instead they bottle necked. While jqMosaic had very little overhead and fanned out to use all of the
+cores beautifully.
+
+                            average                       range
+Java Executors          -   2million messages/second    (  2 -   3m)
+Thread switching actors -  16m mps                      ( 15 -  20m)
+Thread pinned actors    - 150m mps                      (120 - 200m)
+
+                 Figures from a reference machine (a 2011, 2ghz, 8 core, mac book pro laptop) running OSx and JDK 1.6.
+                 The Tests were run from within IntelliJ, so one CPU core was used by the IDE.
+
+
+
