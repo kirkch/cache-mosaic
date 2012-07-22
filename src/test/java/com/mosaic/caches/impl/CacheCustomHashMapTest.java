@@ -1,4 +1,4 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
 
 import org.junit.Test;
 
@@ -7,10 +7,10 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class CacheMapTest extends BasicCacheTestCases {
+public class CacheCustomHashMapTest extends BasicCacheTestCases {
 
-    public CacheMapTest() {
-        super( new CacheMap<String, Integer>() );
+    public CacheCustomHashMapTest() {
+        super( new CacheCustomHashMap<String, Integer>(10) );
     }
 
     @Test

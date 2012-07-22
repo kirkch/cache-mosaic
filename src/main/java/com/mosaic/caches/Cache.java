@@ -5,6 +5,11 @@ package com.mosaic.caches;
  */
 public abstract class Cache<K,V> {
 
+    /**
+     * Returns how many values are currently stored within the cache.
+     */
+    public abstract int size();
+
     public final V get( K key ) {
         return doGet( key, key.hashCode() );
     }
@@ -35,9 +40,9 @@ public abstract class Cache<K,V> {
 
 
 
-    protected abstract V doGet( K key, int keyHashCode );
-    protected abstract V doPut( K key, V newValue, int keyHashCode );
-    protected abstract V doPutIfAbsent( K key, V newValue, int keyHashCode );
-    protected abstract V doRemove( K key, int keyHashCode );
-    protected abstract V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode );
+    public abstract V doGet( K key, int keyHashCode );
+    public abstract V doPut( K key, V newValue, int keyHashCode );
+    public abstract V doPutIfAbsent( K key, V newValue, int keyHashCode );
+    public abstract V doRemove( K key, int keyHashCode );
+    public abstract V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode );
 }

@@ -1,5 +1,7 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
 
+import com.mosaic.caches.Cache;
+import com.mosaic.caches.Fetcher;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -22,8 +24,20 @@ public abstract class BasicCacheTestCases {
     }
 
     @Test
+    public void emptyCache_size_expect0() {
+        assertEquals( 0, cache.size() );
+    }
+
+    @Test
     public void emptyCache_putValue_expectPutToReturnNull() {
         assertNull( cache.put( "a", 1 ) );
+    }
+
+    @Test
+    public void cacheWithOneValue_callSize_expect1() {
+        cache.put( "a", 1 );
+
+        assertEquals( 1, cache.size() );
     }
 
     @Test
@@ -121,6 +135,14 @@ public abstract class BasicCacheTestCases {
         cache.put("a", 20);
 
         assertEquals( new Integer(20), cache.getOrFetch( "a", new MyFetcher() ) );
+    }
+
+    @Test
+    public void cacheWithTwoValues_callSize_expect2() {
+        cache.put("a", 20);
+        cache.put("b", 10);
+
+        assertEquals( 2, cache.size() );
     }
 
     private static class MyFetcher implements Fetcher<String,Integer> {

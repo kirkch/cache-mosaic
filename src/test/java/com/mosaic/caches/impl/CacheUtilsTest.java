@@ -1,8 +1,8 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
 
 import org.junit.Test;
 
-import static com.mosaic.caches.CacheUtils.roundUpToClosestPowerOf2;
+import static com.mosaic.caches.impl.CacheUtils.roundUpToClosestPowerOf2;
 import static org.junit.Assert.assertEquals;
 
 /**

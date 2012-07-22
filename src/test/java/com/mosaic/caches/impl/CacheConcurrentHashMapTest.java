@@ -1,4 +1,4 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
 

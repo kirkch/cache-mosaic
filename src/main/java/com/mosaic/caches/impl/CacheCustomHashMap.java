@@ -1,6 +1,9 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
 
-import static com.mosaic.caches.CacheUtils.roundUpToClosestPowerOf2;
+import com.mosaic.caches.Cache;
+import com.mosaic.caches.Fetcher;
+
+import static com.mosaic.caches.impl.CacheUtils.roundUpToClosestPowerOf2;
 
 /**
  * Experiment in getting a faster cache that java.util.HashMap. Conclusion so far: Marginally faster than java.util.HashMap
@@ -41,31 +44,35 @@ public class CacheCustomHashMap<K,V> extends Cache<K,V> {
         maxSizeBeforeResizing = (mapSize*9)/10;
     }
 
-    protected V doGet( K key, int keyHashCode ) {
+    public int size() {
+        return currentSize;
+    }
+
+    public V doGet( K key, int keyHashCode ) {
         int i = toIndex( keyHashCode );
 
         return map[i].get( key, keyHashCode );
     }
 
-    protected V doPut( K key, V newValue, int keyHashCode ) {
+    public V doPut( K key, V newValue, int keyHashCode ) {
         int i = toIndex( keyHashCode );
 
         return map[i].put( key, newValue, keyHashCode );
     }
 
-    protected V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
+    public V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
         int i = toIndex( keyHashCode );
 
         return map[i].putIfAbsent(key, newValue, keyHashCode);
     }
 
-    protected V doRemove( K key, int keyHashCode ) {
+    public V doRemove( K key, int keyHashCode ) {
         int i = toIndex( keyHashCode );
 
         return map[i].remove(key, keyHashCode);
     }
 
-    protected V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode ) {
+    public V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode ) {
         int i = toIndex( keyHashCode );
 
         return map[i].doGetOrFetch(key, fetcher, keyHashCode);

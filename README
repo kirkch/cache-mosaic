@@ -1,22 +1,26 @@
 
-jqMosaic
-=====
+cache-mosaic
+============
 
-Very fast, modular job queues. Written entirely in Java no dependencies.
+Modular Java caches.
 
 
-Job queue performance. Measured by incrementing an AtomicLong within each job. See MultiThreadedSchedulerPerfTests for
-the code. Java Executors were very slow in these tests because they did not scale out across the 8 cores of the referance
-machine very well. Instead they bottle necked. While jqMosaic had very little overhead and fanned out to use all of the
-cores beautifully.
+Cache performance. Measured by invoking get, putIfAbsent, get, 10,000 times in row.
 
-                            average                       range
-Java Executors          -   2million messages/second    (  2 -   3m)
-Thread switching actors -  16m mps                      ( 15 -  20m)
-Thread pinned actors    - 150m mps                      (120 - 200m)
+  java.util   java.util.concurrent.
+   HashMap     ConcurrentHashMap     CacheClosedHashMap
+   ----------------------------------------------------
+   1.116ms           1.488ms              0.341ms
+   0.782ms           1.562ms              0.354ms
+   1.177ms           1.385ms              0.325ms
 
                  Figures from a reference machine (a 2011, 2ghz, 8 core, mac book pro laptop) running OSx and JDK 1.6.
-                 The Tests were run from within IntelliJ, so one CPU core was used by the IDE.
+                 Using only one cpu core.
+
+
+Caches are constructed programmatically at runtime by chaining cache features together. The less features used, the faster the cache will be.
+
+
 
 
 

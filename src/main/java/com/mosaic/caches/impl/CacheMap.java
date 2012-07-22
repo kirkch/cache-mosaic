@@ -1,10 +1,16 @@
-package com.mosaic.caches;
+package com.mosaic.caches.impl;
+
+import com.mosaic.caches.Cache;
+import com.mosaic.caches.Fetcher;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Wraps an instance of java.util.Map.<p/>
  *
+ * It should be noted that ConcurrentHashMap is approximately 50% slower than java.util.HashMap. However HashMap is
+ * not thread safe.
  */
 public class CacheMap<K,V> extends Cache<K,V> {
 
@@ -22,15 +28,15 @@ public class CacheMap<K,V> extends Cache<K,V> {
         return map.size();
     }
 
-    protected V doGet( K key, int keyHashCode ) {
+    public V doGet( K key, int keyHashCode ) {
         return map.get(key);
     }
 
-    protected V doPut( K key, V newValue, int keyHashCode ) {
+    public V doPut( K key, V newValue, int keyHashCode ) {
         return map.put(key, newValue);
     }
 
-    protected V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
+    public V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
         V currentValue = map.get(key);
         if ( currentValue != null ) {
             return currentValue;
@@ -39,11 +45,11 @@ public class CacheMap<K,V> extends Cache<K,V> {
         return doPut( key, newValue, keyHashCode );
     }
 
-    protected V doRemove( K key, int keyHashCode ) {
+    public V doRemove( K key, int keyHashCode ) {
         return map.remove(key);
     }
 
-    protected V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode ) {
+    public V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode ) {
         V currentValue = map.get(key);
         if ( currentValue != null ) {
             return currentValue;
