@@ -23,7 +23,7 @@ import static com.mosaic.caches.impl.CacheUtils.roundUpToClosestPowerOf2;
  * This cache is not thread safe, but can be made thread safe by wrapping it with SynchronizedCacheWrapper or ReadWriteCacheWrapper.
  */
 @SuppressWarnings("unchecked")
-public class CacheClosedHashMap<K,V> extends Cache<K,V> {
+public class CacheInlineHashMap<K,V> extends Cache<K,V> {
 
     private Element<K,V>[] map;
 
@@ -34,15 +34,15 @@ public class CacheClosedHashMap<K,V> extends Cache<K,V> {
     private final int    reservationShift;
     private final double loadFactor;
 
-    public CacheClosedHashMap() {
+    public CacheInlineHashMap() {
         this(10);
     }
 
-    public CacheClosedHashMap( int initialMapSize ) {
+    public CacheInlineHashMap( int initialMapSize ) {
         this( initialMapSize, 0.25, 1 );
     }
 
-    public CacheClosedHashMap( int initialMapSize, double loadFactor, int reservationShift ) {
+    public CacheInlineHashMap( int initialMapSize, double loadFactor, int reservationShift ) {
         this.reservationShift = reservationShift;
         this.loadFactor       = loadFactor;
 

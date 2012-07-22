@@ -31,22 +31,22 @@ CacheMap CacheCustomHashMap concurrentHashMap CacheClosedHashMap
 // -server -Xms800m -Xmx800m -XX:MaxPermSize=100m -XX:PermSize=100m -Dsun.net.inetaddr.ttl=120 -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSIncrementalPacing -XX:CMSIncrementalDutyCycle=10 -XX:CMSIncrementalDutyCycleMin=0 -XX:SurvivorRatio=2 -XX:NewRatio=3 -XX:-CMSClassUnloadingEnabled
     @Test
     public void perfTest() {
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap( new ConcurrentHashMap() ) , new CacheClosedHashMap()); // warmup
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap( new ConcurrentHashMap() ) , new CacheClosedHashMap());
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap(new ConcurrentHashMap())   , new CacheClosedHashMap());
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap(new ConcurrentHashMap())   , new CacheClosedHashMap());
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap(new ConcurrentHashMap())   , new CacheClosedHashMap());
-        doPerfTests( new CacheMap(), new CacheCustomHashMap(), new CacheMap(new ConcurrentHashMap())   , new CacheClosedHashMap());
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap( new ConcurrentHashMap() ) , new CacheInlineHashMap()); // warmup
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap( new ConcurrentHashMap() ) , new CacheInlineHashMap());
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
+        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
     }
 
     @Test
     public void composites() {
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
-        doPerfTests( new CacheClosedHashMap(), new LRUEvictionCacheWrapper(new CacheClosedHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
     }
 
     private void doPerfTests( Cache...caches ) {

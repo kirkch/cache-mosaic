@@ -7,9 +7,10 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class CacheClosedHashMapTest extends BasicCacheTestCases {
-    public CacheClosedHashMapTest() {
-        super( new CacheClosedHashMap<String,Integer>() );
+public class CacheHashMapTest extends BasicCacheTestCases {
+
+    public CacheHashMapTest() {
+        super( new CacheHashMap<String, Integer>() );
     }
 
     @Test
@@ -27,4 +28,5 @@ public class CacheClosedHashMapTest extends BasicCacheTestCases {
             }
         }
     }
+
 }

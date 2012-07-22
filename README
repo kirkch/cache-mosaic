@@ -8,7 +8,7 @@ Modular Java caches.
 Cache performance. Measured by invoking get, putIfAbsent, get, 10,000 times in row.
 
   java.util   java.util.concurrent.
-   HashMap     ConcurrentHashMap     CacheClosedHashMap
+   HashMap     ConcurrentHashMap     CacheInlineHashMap
    ----------------------------------------------------
    1.116ms           1.488ms              0.341ms
    0.782ms           1.562ms              0.354ms
