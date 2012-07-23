@@ -2,12 +2,13 @@ package com.mosaic.caches.decorators;
 
 import com.mosaic.caches.Cache;
 import com.mosaic.caches.Fetcher;
+import com.mosaic.caches.impl.BaseCache;
 
 /**
  *
  */
 @SuppressWarnings("unchecked")
-public class LRUEvictionCacheWrapper<K,V> extends Cache<K,V> {
+public class LRUEvictionCacheWrapper<K,V> extends BaseCache<K,V> {
 
     private final Cache<K,EvictionNode<K,V>> underlyingCache;
     private final int                        maxCacheSize;
@@ -17,6 +18,8 @@ public class LRUEvictionCacheWrapper<K,V> extends Cache<K,V> {
 
 
     public LRUEvictionCacheWrapper( Cache<K, V> wrappedCache, int maxCacheSize ) {
+        super( wrappedCache.getCacheName() );
+
         this.maxCacheSize = maxCacheSize;
         underlyingCache = (Cache<K, EvictionNode<K,V>>) wrappedCache;
     }

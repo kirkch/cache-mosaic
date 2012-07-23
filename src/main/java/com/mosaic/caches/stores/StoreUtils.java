@@ -1,9 +1,9 @@
-package com.mosaic.caches.impl;
+package com.mosaic.caches.stores;
 
 /**
  *
  */
-abstract class CacheUtils {
+abstract class StoreUtils {
 
     public static int roundUpToClosestPowerOf2( int v ) {
         int n = 2;

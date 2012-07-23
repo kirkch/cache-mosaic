@@ -1,16 +1,11 @@
-package com.mosaic.caches.impl;
+package com.mosaic.caches;
 
-import com.mosaic.caches.Cache;
-import com.mosaic.caches.decorators.LRUEvictionCacheWrapper;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  */
-@Ignore
+//@Ignore
 @SuppressWarnings({"unchecked", "UnnecessaryBoxing"})
 public class CachePerfTests {
 
@@ -31,29 +26,30 @@ CacheMap CacheCustomHashMap concurrentHashMap CacheClosedHashMap
 // -server -Xms800m -Xmx800m -XX:MaxPermSize=100m -XX:PermSize=100m -Dsun.net.inetaddr.ttl=120 -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSIncrementalPacing -XX:CMSIncrementalDutyCycle=10 -XX:CMSIncrementalDutyCycleMin=0 -XX:SurvivorRatio=2 -XX:NewRatio=3 -XX:-CMSClassUnloadingEnabled
     @Test
     public void perfTest() {
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap( new ConcurrentHashMap() ) , new CacheInlineHashMap()); // warmup
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap( new ConcurrentHashMap() ) , new CacheInlineHashMap());
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
-        doPerfTests( new CacheHashMap(), new CacheCustomHashMap(), new CacheHashMap(new ConcurrentHashMap())   , new CacheInlineHashMap());
+        for ( int i=0; i<5; i++ ) {
+            doPerfTests(
+                CacheFactory.singleThreadedDefaultCache( "ju.HashMap", String.class, Integer.class ),
+                CacheFactory.threadSafeConcurrentMapCache( "ju.HashMap", String.class, Integer.class ),
+                CacheFactory.singleThreadedInlineHashMapCache( "inline-hashmap", String.class, Integer.class )
+            );
+        }
     }
 
-    @Test
-    public void composites() {
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
-    }
+//    @Test
+//    public void composites() {
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//        doPerfTests( new CacheInlineHashMap(), new LRUEvictionCacheWrapper(new CacheInlineHashMap(),3) );
+//    }
 
     private void doPerfTests( Cache...caches ) {
 
         if ( round == 0 ) {
             for ( Cache c : caches ) {
-                System.out.print( c.getClass().getSimpleName() + " " );
+                System.out.print( c.getCacheName() + " " );
             }
 
             System.out.println( "" );

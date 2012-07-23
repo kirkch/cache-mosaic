@@ -1,7 +1,7 @@
 package com.mosaic.caches.decorators;
 
 import com.mosaic.caches.impl.BasicCacheTestCases;
-import com.mosaic.caches.impl.CacheHashMap;
+import com.mosaic.caches.impl.DefaultCache;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class LRUEvictionCacheWrapperTest extends BasicCacheTestCases {
 
     public LRUEvictionCacheWrapperTest() {
-        super( new LRUEvictionCacheWrapper( new CacheHashMap(), 3 ) );
+        super( new LRUEvictionCacheWrapper( new DefaultCache("test-cache"), 3 ) );
     }
 
     @Test

@@ -3,40 +3,33 @@ package com.mosaic.caches;
 /**
  *
  */
-public abstract class Cache<K,V> {
+public interface Cache<K,V> {
+
+
+    public String getCacheName();
 
     /**
      * Returns how many values are currently stored within the cache.
      */
     public abstract int size();
 
-    public final V get( K key ) {
-        return doGet( key, key.hashCode() );
-    }
+    public V get( K key );
 
     /**
      * Place the specified mapping into the cache. Returns the old mapping that was just replaced.
      */
-    public final V put( K key, V newValue ) {
-        return doPut( key, newValue, key.hashCode() );
-    }
+    public V put( K key, V newValue );
 
     /**
      * Stores the specified mapping. Returns true if the write was successful, else false means that a mapping was
      * already in the cache and so it was not updated.
      */
-    public final V putIfAbsent( K key, V newValue ) {
-        return doPutIfAbsent( key, newValue, key.hashCode() );
-    }
+    public V putIfAbsent( K key, V newValue );
 
 
-    public final V remove( K key ) {
-        return doRemove( key, key.hashCode() );
-    }
+    public V remove( K key );
 
-    public final V getOrFetch( K key, Fetcher<K,V> fetcher ) {
-        return doGetOrFetch( key, fetcher, key.hashCode() );
-    }
+    public V getOrFetch( K key, Fetcher<K,V> fetcher );
 
 
 

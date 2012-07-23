@@ -1,30 +1,11 @@
-package com.mosaic.caches.impl;
+package com.mosaic.caches.stores;
 
-import com.mosaic.caches.Cache;
-import com.mosaic.caches.Fetcher;
-
-import static com.mosaic.caches.impl.CacheUtils.roundUpToClosestPowerOf2;
+import static com.mosaic.caches.stores.StoreUtils.roundUpToClosestPowerOf2;
 
 /**
- * Roughly twice as fast as java.util.HashMap, but uses two times the amount of memory when empty. Best to use this cache
- * for small fixed size caches that need to be very very fast. <p/>
  *
- * The most robust (in terms of GC impact on performance) and flexible cache is to use CacheMap (backed by java.util.HashMap).<p/>
- *
- * This cache type is very sensitive to the characteristics of the hashing algorithm. In order to have some robustness
- * to clustering this implementation reserves one space in the hash array for a collision; at the expense of memory. This
- * optimisation works for many cases however no optimisation will save the closed map from clustering of keys around
- * a single hash code.<p/>
- *
- * It is thus strongly encouraged that you measure the performance of the cache against your use case before committing
- * to this cache. Otherwise fall back to CacheMap which is much more tolerant to clustering of hash values and thus has
- * much better worst case performance.<p/>
- *
- * This cache is not thread safe, but can be made thread safe by wrapping it with SynchronizedCacheWrapper or ReadWriteCacheWrapper.
  */
-@SuppressWarnings("unchecked")
-public class CacheInlineHashMap<K,V> extends Cache<K,V> {
-
+public class InlineMapStore<K,V> implements Store<K,V>{
     private Element<K,V>[] map;
 
     private int currentSize;
@@ -34,15 +15,15 @@ public class CacheInlineHashMap<K,V> extends Cache<K,V> {
     private final int    reservationShift;
     private final double loadFactor;
 
-    public CacheInlineHashMap() {
+    public InlineMapStore() {
         this(10);
     }
 
-    public CacheInlineHashMap( int initialMapSize ) {
+    public InlineMapStore( int initialMapSize ) {
         this( initialMapSize, 0.25, 1 );
     }
 
-    public CacheInlineHashMap( int initialMapSize, double loadFactor, int reservationShift ) {
+    public InlineMapStore( int initialMapSize, double loadFactor, int reservationShift ) {
         this.reservationShift = reservationShift;
         this.loadFactor       = loadFactor;
 
@@ -65,7 +46,7 @@ public class CacheInlineHashMap<K,V> extends Cache<K,V> {
     }
 
     @Override
-    public V doGet( K key, int keyHashCode ) {
+    public V get( K key, int keyHashCode ) {
         int i = toIndex( keyHashCode );
         while ( true ) {
             Element<K,V> e = map[i];
@@ -81,7 +62,7 @@ public class CacheInlineHashMap<K,V> extends Cache<K,V> {
     }
 
     @Override
-    public V doPut( K key, V newValue, int keyHashCode ) {
+    public V put( K key, V newValue, int keyHashCode ) {
         int attemptCount = 0;
 
         while ( true ) {
@@ -108,28 +89,7 @@ public class CacheInlineHashMap<K,V> extends Cache<K,V> {
     }
 
     @Override
-    public V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
-        int i = toIndex( keyHashCode );
-        while ( true ) {
-            Element<K,V> e = map[i];
-
-            if ( e == null ) {
-                Element newElement = new Element( key, newValue, keyHashCode );
-
-                map[i] = newElement;
-                newElementAdded();
-
-                return null;
-            } else if ( e.keyHashCode == keyHashCode && e.key.equals(key) ) {
-                return e.value;
-            }
-
-            i = (i + 1) & bitMask;
-        }
-    }
-
-    @Override
-    public V doRemove( K key, int keyHashCode ) {
+    public V remove( K key, int keyHashCode ) {
         int startOfChainIndex = toIndex( keyHashCode );
         int i = startOfChainIndex;
         while ( true ) {
@@ -147,28 +107,6 @@ public class CacheInlineHashMap<K,V> extends Cache<K,V> {
                     map[endOfChainIndex] = null;
                 }
 
-                return e.value;
-            }
-
-            i = (i + 1) & bitMask;
-        }
-    }
-
-    @Override
-    public V doGetOrFetch( K key, Fetcher<K, V> kvFetcher, int keyHashCode ) {
-        int i = toIndex( keyHashCode );
-        while ( true ) {
-            Element<K,V> e = map[i];
-
-            if ( e == null ) {
-                V       newValue   = kvFetcher.fetch( key );
-                Element newElement = new Element( key, newValue, keyHashCode );
-
-                map[i] = newElement;
-                newElementAdded();
-
-                return newValue;
-            } else if ( e.keyHashCode == keyHashCode && e.key.equals(key) ) {
                 return e.value;
             }
 

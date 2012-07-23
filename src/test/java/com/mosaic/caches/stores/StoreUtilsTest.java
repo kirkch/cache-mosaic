@@ -1,14 +1,14 @@
-package com.mosaic.caches.impl;
+package com.mosaic.caches.stores;
 
 import org.junit.Test;
 
-import static com.mosaic.caches.impl.CacheUtils.roundUpToClosestPowerOf2;
+import static com.mosaic.caches.stores.StoreUtils.roundUpToClosestPowerOf2;
 import static org.junit.Assert.assertEquals;
 
 /**
  *
  */
-public class CacheUtilsTest {
+public class StoreUtilsTest {
 
     @Test
     public void testRoundUpToClosestPowerOf2() {

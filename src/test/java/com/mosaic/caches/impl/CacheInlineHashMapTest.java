@@ -1,5 +1,6 @@
 package com.mosaic.caches.impl;
 
+import com.mosaic.caches.stores.InlineMapStore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CacheInlineHashMapTest extends BasicCacheTestCases {
     public CacheInlineHashMapTest() {
-        super( new CacheInlineHashMap<String,Integer>() );
+        super( new DefaultCache<String, Integer>("test-cache", new InlineMapStore()) );
     }
 
     @Test

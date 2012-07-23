@@ -1,10 +1,10 @@
 package com.mosaic.caches.impl;
 
-import com.mosaic.caches.Cache;
 import com.mosaic.caches.Fetcher;
+import com.mosaic.caches.stores.MapStore;
+import com.mosaic.caches.stores.Store;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Wraps an instance of java.util.Map.<p/>
@@ -12,32 +12,35 @@ import java.util.Map;
  * It should be noted that ConcurrentHashMap is approximately 50% slower than java.util.HashMap. However HashMap is
  * not thread safe.
  */
-public class CacheHashMap<K,V> extends Cache<K,V> {
+public class DefaultCache<K,V> extends BaseCache<K,V> {
 
-    private Map<K,V> map;
+    private Store<K,V> store;
 
-    public CacheHashMap() {
-        this( new HashMap<K,V>() );
+    public DefaultCache( String name ) {
+        this( name, new MapStore<K,V>(new HashMap<K,V>()) );
     }
 
-    public CacheHashMap( Map<K, V> underlyingMap ) {
-        map = underlyingMap;
+    public DefaultCache( String cacheName, Store<K, V> underlyingStore ) {
+        super( cacheName );
+
+        this.store     = underlyingStore;
     }
+
 
     public int size() {
-        return map.size();
+        return store.size();
     }
 
     public V doGet( K key, int keyHashCode ) {
-        return map.get(key);
+        return store.get(key, keyHashCode);
     }
 
     public V doPut( K key, V newValue, int keyHashCode ) {
-        return map.put(key, newValue);
+        return store.put(key, newValue, keyHashCode);
     }
 
     public V doPutIfAbsent( K key, V newValue, int keyHashCode ) {
-        V currentValue = map.get(key);
+        V currentValue = store.get(key, keyHashCode);
         if ( currentValue != null ) {
             return currentValue;
         }
@@ -46,11 +49,11 @@ public class CacheHashMap<K,V> extends Cache<K,V> {
     }
 
     public V doRemove( K key, int keyHashCode ) {
-        return map.remove(key);
+        return store.remove(key, keyHashCode);
     }
 
     public V doGetOrFetch( K key, Fetcher<K,V> fetcher, int keyHashCode ) {
-        V currentValue = map.get(key);
+        V currentValue = store.get(key, keyHashCode);
         if ( currentValue != null ) {
             return currentValue;
         }

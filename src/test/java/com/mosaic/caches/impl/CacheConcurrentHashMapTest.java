@@ -1,5 +1,7 @@
 package com.mosaic.caches.impl;
 
+import com.mosaic.caches.stores.MapStore;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -8,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheConcurrentHashMapTest extends BasicCacheTestCases {
 
     public CacheConcurrentHashMapTest() {
-        super( new CacheHashMap<String, Integer>(new ConcurrentHashMap<String,Integer>()) );
+        super( new DefaultCache<String, Integer>("test-cache", new MapStore(new ConcurrentHashMap<String,Integer>())) );
     }
 
 }
