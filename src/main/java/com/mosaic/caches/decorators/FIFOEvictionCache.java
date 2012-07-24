@@ -4,29 +4,21 @@ import com.mosaic.caches.Cache;
 import com.mosaic.caches.Fetcher;
 
 /**
- *
+ * Last In First Out cache. Keeps hold of all values until a max size is reached, at which time it evicts entries
+ * newest first.
  */
-public class LRUEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
+public class FIFOEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
 
-    // writes to head
-    // pops from tail
-    // moves tail to head on reads
-
-    public LRUEvictionCache( Cache<K, V> wrappedCache, int maxCacheSize ) {
+    public FIFOEvictionCache( Cache<K, V> wrappedCache, int maxCacheSize ) {
         super( wrappedCache.getCacheName(), wrappedCache, maxCacheSize );
     }
+
 
     @Override
     public V doGet( K key, int keyHashCode ) {
         EvictionNode<K,V> evictionRecord = underlyingCache.doGet( key, keyHashCode );
 
-        if ( evictionRecord == null ) {
-            return null;
-        }
-
-        moveEvictionRecordToHead( evictionRecord );
-
-        return evictionRecord.value;
+        return evictionRecord == null ? null : evictionRecord.value;
     }
 
     @Override
@@ -36,9 +28,8 @@ public class LRUEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
         if ( currentEvictionRecord == null ) {
             return writeToHead( key, newValue, keyHashCode );
         } else {
-            moveEvictionRecordToHead( currentEvictionRecord );
-
             V oldValue = currentEvictionRecord.value;
+
             currentEvictionRecord.value = newValue;
 
             return oldValue;

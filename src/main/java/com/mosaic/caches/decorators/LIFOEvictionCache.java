@@ -6,27 +6,18 @@ import com.mosaic.caches.Fetcher;
 /**
  *
  */
-public class LRUEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
+public class LIFOEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
 
-    // writes to head
-    // pops from tail
-    // moves tail to head on reads
-
-    public LRUEvictionCache( Cache<K, V> wrappedCache, int maxCacheSize ) {
+    public LIFOEvictionCache( Cache<K, V> wrappedCache, int maxCacheSize ) {
         super( wrappedCache.getCacheName(), wrappedCache, maxCacheSize );
     }
+
 
     @Override
     public V doGet( K key, int keyHashCode ) {
         EvictionNode<K,V> evictionRecord = underlyingCache.doGet( key, keyHashCode );
 
-        if ( evictionRecord == null ) {
-            return null;
-        }
-
-        moveEvictionRecordToHead( evictionRecord );
-
-        return evictionRecord.value;
+        return evictionRecord == null ? null : evictionRecord.value;
     }
 
     @Override
@@ -36,9 +27,8 @@ public class LRUEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
         if ( currentEvictionRecord == null ) {
             return writeToHead( key, newValue, keyHashCode );
         } else {
-            moveEvictionRecordToHead( currentEvictionRecord );
-
             V oldValue = currentEvictionRecord.value;
+
             currentEvictionRecord.value = newValue;
 
             return oldValue;
@@ -71,7 +61,9 @@ public class LRUEvictionCache<K,V> extends BaseEvicitionCache<K,V> {
         return currentEvictionRecord.value;
     }
 
+
+
     protected void trimCacheToSize( int targetSize ) {
-        trimFromTail( targetSize );
+        trimFromHead( targetSize );
     }
 }

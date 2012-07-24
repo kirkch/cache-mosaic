@@ -2,7 +2,7 @@
 cache-mosaic
 ============
 
-Modular Java caches.
+Modular, light-weight Java caches. Select desired behaviour by mix-and-matching functionality together via composition. The swiss army knife of caching libraries. No config files, no dependencies on any other libraries; no fat, no gristle, just meat.
 
 
 Cache performance. Measured by invoking get, putIfAbsent, get, 10,000 times in row.
@@ -14,13 +14,62 @@ Cache performance. Measured by invoking get, putIfAbsent, get, 10,000 times in r
    0.782ms           1.562ms              0.354ms
    1.177ms           1.385ms              0.325ms
 
-                 Figures from a reference machine (a 2011, 2ghz, 8 core, mac book pro laptop) running OSx and JDK 1.6.
-                 Using only one cpu core.
+Figures from a reference machine (a 2011, 2ghz, 8 core, mac book pro laptop) running OSx and JDK 1.6.
+Using only one cpu core.
 
 
-Caches are constructed programmatically at runtime by chaining cache features together. The less features used, the faster the cache will be.
+Caches are constructed programmatically at runtime by chaining cache features together. The less features used, the faster the cache will be. A rough and ready timing harness can be found in com.mosaic.caches.CachePerfTests which you can use to measure different cache configurations on your hardware and with a bit more effort, your data.
+
+
+For a quick start: See tutorial at TODO.
+Also com.mosaic.caches.CacheFactory makes an excellent starting place. It contains some common configurations that you can start using immediately. As you become more comfortable with the library, then you can start composing different behaviours together to create caches that meet you specific needs.
 
 
 
+Features Supported Out of the Box (easily extensible for anything that you may be missing - contributions welcome):
+
+
+
+Eviction Policies:
+
+  LRU
+LIFO
+FIFO
+Time
+
+Cache Behaviours:
+
+  Supports versioned data (a form of optimistic lock)
+  Supports unversioned data
+  Near side caches
+Read behind caches
+Write behind caches
+Write through caches
+Cache chaining
+Serve stale value while refreshing asynchronously
+Collects cache statistics
+Pushes cache statistics
+
+Garbage Collection:
+
+Hard references
+Soft references
+Weak references
+Off heap, but within JVM process. Which avoids GC costs entirely. The design of the off-heap cache integrates well with Netty, and it adheres to Netty's write-once principle; making it very easy to write network based caches that compete with the fasted of servers.
+
+Thread Safety:
+
+  Fully Synchronized
+  No Synchronization
+  Read Write Locks (both single writer and multiple writer varieties achieved via lock striping)
+  Striping load across multiple locks to spread contention, reducing lock related bottlenecks
+  CAS (via java.util.ConcurrentHashMap)
+
+Storage:
+
+  List backed hash maps
+  Closed array backed hash maps
+File
+Off heap (away from GC overhead)
 
 
