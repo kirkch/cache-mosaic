@@ -9,10 +9,10 @@ import static org.junit.Assert.*;
  *
  */
 @SuppressWarnings("unchecked")
-public class LRUEvictionCacheWrapperTest extends BasicCacheTestCases {
+public class LRUEvictionCacheTest extends BasicCacheTestCases {
 
-    public LRUEvictionCacheWrapperTest() {
-        super( new LRUEvictionCacheWrapper( new DefaultCache("test-cache"), 3 ) );
+    public LRUEvictionCacheTest() {
+        super( new LRUEvictionCache( new DefaultCache("test-cache"), 3 ) );
     }
 
     @Test

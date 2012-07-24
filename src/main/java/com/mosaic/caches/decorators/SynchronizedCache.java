@@ -7,11 +7,11 @@ import com.mosaic.caches.impl.BaseCache;
 /**
  *
  */
-public class SynchronizedCacheWrapper<K,V> extends BaseCache<K,V> {
+public class SynchronizedCache<K,V> extends BaseCache<K,V> {
 
     private Cache<K, V> wrappedCache;
 
-    public SynchronizedCacheWrapper( Cache<K, V> wrappedCache ) {
+    public SynchronizedCache( Cache<K, V> wrappedCache ) {
         super( wrappedCache.getCacheName() );
 
         this.wrappedCache = wrappedCache;

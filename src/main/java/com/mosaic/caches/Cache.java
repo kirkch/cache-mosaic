@@ -26,7 +26,6 @@ public interface Cache<K,V> {
      */
     public V putIfAbsent( K key, V newValue );
 
-
     public V remove( K key );
 
     public V getOrFetch( K key, Fetcher<K,V> fetcher );

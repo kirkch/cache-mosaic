@@ -1,8 +1,10 @@
 package com.mosaic.caches;
 
 import com.mosaic.caches.impl.DefaultCache;
+import com.mosaic.caches.impl.ReadWriteCache;
 import com.mosaic.caches.stores.InlineMapStore;
 import com.mosaic.caches.stores.MapStore;
+import com.mosaic.caches.stores.Store;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +28,7 @@ public class CacheFactory {
      * Create a very fast cache backed by an inline hash map. Inline meaning that the hash map handles collisions by
      * moving on to the next bucket within the hash map array rather than using linked lists. This makes the hash map
      * extremely fast for sparse data (and sparse hashing algorithms). However it does not handle clustering very well,
-     * in which case the worst case performance becomes linear.  
+     * in which case the worst case performance becomes linear.
      *
      * This cache is not thread safe and while it is approximately two times faster than the default cache backed by java.util.HashMap;
      * however care must be taken because it does have worse worst case performance and it uses more memory. So testing for
@@ -46,6 +48,15 @@ public class CacheFactory {
         MapStore<K, V> store = new MapStore<K, V>( new ConcurrentHashMap<K, V>() );
 
         return new DefaultCache<K,V>( cacheName, store );
+    }
+
+    /**
+     * A thread safe cache that supports multiple simultaneous readers and one writer at a time.
+     */
+    public static <K,V> Cache<K,V> readWriteInlineMapCache( String cacheName, Class<K> keyType, Class<V> valueType ) {
+        Store<K, V> store = new InlineMapStore<K, V>();
+
+        return new ReadWriteCache<K,V>( cacheName, store );
     }
 
 }

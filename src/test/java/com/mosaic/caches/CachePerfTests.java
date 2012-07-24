@@ -29,8 +29,9 @@ CacheMap CacheCustomHashMap concurrentHashMap CacheClosedHashMap
         for ( int i=0; i<5; i++ ) {
             doPerfTests(
                 CacheFactory.singleThreadedDefaultCache( "ju.HashMap", String.class, Integer.class ),
-                CacheFactory.threadSafeConcurrentMapCache( "ju.HashMap", String.class, Integer.class ),
-                CacheFactory.singleThreadedInlineHashMapCache( "inline-hashmap", String.class, Integer.class )
+                CacheFactory.threadSafeConcurrentMapCache( "ju.ConcHashMap", String.class, Integer.class ),
+                CacheFactory.singleThreadedInlineHashMapCache( "inline-hashmap", String.class, Integer.class ),
+                CacheFactory.readWriteInlineMapCache( "rw-inline-hashmap", String.class, Integer.class )
             );
         }
     }

@@ -8,7 +8,7 @@ import com.mosaic.caches.impl.BaseCache;
  *
  */
 @SuppressWarnings("unchecked")
-public class LRUEvictionCacheWrapper<K,V> extends BaseCache<K,V> {
+public class LRUEvictionCache<K,V> extends BaseCache<K,V> {
 
     private final Cache<K,EvictionNode<K,V>> underlyingCache;
     private final int                        maxCacheSize;
@@ -17,7 +17,7 @@ public class LRUEvictionCacheWrapper<K,V> extends BaseCache<K,V> {
     private EvictionNode<K,V> deletionEnd; // tail
 
 
-    public LRUEvictionCacheWrapper( Cache<K, V> wrappedCache, int maxCacheSize ) {
+    public LRUEvictionCache( Cache<K, V> wrappedCache, int maxCacheSize ) {
         super( wrappedCache.getCacheName() );
 
         this.maxCacheSize = maxCacheSize;
