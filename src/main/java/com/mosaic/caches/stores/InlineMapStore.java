@@ -1,6 +1,6 @@
 package com.mosaic.caches.stores;
 
-import static com.mosaic.caches.stores.StoreUtils.roundUpToClosestPowerOf2;
+import static com.mosaic.caches.util.BitUtils.roundUpToClosestPowerOf2;
 
 /**
  *

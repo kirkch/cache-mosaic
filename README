@@ -22,7 +22,7 @@ Caches are constructed programmatically at runtime by chaining cache features to
 
 
 For a quick start: See tutorial at TODO.
-Also com.mosaic.caches.CacheFactory makes an excellent starting place. It contains some common configurations that you can start using immediately. As you become more comfortable with the library, then you can start composing different behaviours together to create caches that meet you specific needs.
+Also com.mosaic.caches.CacheFactory makes an excellent starting place. It contains some common configurations that you can start using immediately. As you become more comfortable with the library, then you can start composing different behaviours together to create caches that meet your specific needs.
 
 
 
@@ -33,8 +33,8 @@ Features Supported Out of the Box (easily extensible for anything that you may b
 Eviction Policies:
 
   LRU
-LIFO
-FIFO
+  LIFO
+  FIFO
 Time
 
 Cache Behaviours:
@@ -52,10 +52,10 @@ Pushes cache statistics
 
 Garbage Collection:
 
-Hard references
+  Hard references
 Soft references
 Weak references
-Off heap, but within JVM process. Which avoids GC costs entirely. The design of the off-heap cache integrates well with Netty, and it adheres to Netty's write-once principle; making it very easy to write network based caches that compete with the fasted of servers.
+Off heap, but within JVM process. Which avoids GC costs entirely. The design of the off-heap cache integrates well with Netty, and it adheres to Netty's write-once principle; making it very easy to write network based caches that compete with the fastest of servers.
 
 Thread Safety:
 
@@ -71,5 +71,5 @@ Storage:
   Closed array backed hash maps
 File
 Off heap (away from GC overhead)
-
+Compression
 

@@ -4,7 +4,7 @@ import com.mosaic.caches.Cache;
 import com.mosaic.caches.Factory;
 import com.mosaic.caches.Fetcher;
 import com.mosaic.caches.impl.BaseCache;
-import com.mosaic.caches.stores.StoreUtils;
+import com.mosaic.caches.util.BitUtils;
 
 /**
  *
@@ -18,7 +18,7 @@ public class ParallelCache<K,V> extends BaseCache<K,V> {
     public ParallelCache( String cacheName, int numStripes, Factory<Cache> cacheFactory ) {
         super( cacheName );
 
-        int size = StoreUtils.roundUpToClosestPowerOf2(numStripes);
+        int size = BitUtils.roundUpToClosestPowerOf2( numStripes );
 
         bitmask = size - 1;
         stripes = new Cache[size];
