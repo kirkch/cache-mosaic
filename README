@@ -21,7 +21,6 @@ Using only one cpu core.
 Caches are constructed programmatically at runtime by chaining cache features together. The less features used, the faster the cache will be. A rough and ready timing harness can be found in com.mosaic.caches.CachePerfTests which you can use to measure different cache configurations on your hardware and with a bit more effort, your data.
 
 
-For a quick start: See tutorial at TODO.
 Also com.mosaic.caches.CacheFactory makes an excellent starting place. It contains some common configurations that you can start using immediately. As you become more comfortable with the library, then you can start composing different behaviours together to create caches that meet your specific needs.
 
 
@@ -35,28 +34,13 @@ Eviction Policies:
   LRU
   LIFO
   FIFO
-TTL
-MaxAge
+  TTL
+  MaxAge
 
 Cache Behaviours:
 
-  Supports versioned data (a form of optimistic lock)
   Supports unversioned data
   Near side caches
-Read behind caches
-Write behind caches
-Write through caches
-Cache chaining
-Serve stale value while refreshing asynchronously
-Collects cache statistics
-Pushes cache statistics
-
-Garbage Collection:
-
-  Hard references
-Soft references
-Weak references
-Off heap, but within JVM process. Which avoids GC costs entirely. The design of the off-heap cache integrates well with Netty, and it adheres to Netty's write-once principle; making it very easy to write network based caches that compete with the fastest of servers.
 
 Thread Safety:
 
@@ -69,8 +53,56 @@ Thread Safety:
 Storage:
 
   List backed hash maps
-  Closed array backed hash maps
-File
-Off heap (away from GC overhead)
-Compression
+  Closed array hash maps (super fast)
 
+
+
+
+Future Road Map
+--------------
+
+The beauty of this approach to cacheing is that a class focuses on one technique, and doing that one technique well. It can then be composed with other techniques to create a very wide range of cache behaviours. This is in stark contrast to a single class that does everything, which is more difficult to modify and tweak for cases that do not match your ideal.
+
+The following behaviours will be added to this library at some point. If any of them stand out as necessary for you now, then please feel free to create it and contribute it back to the project or let me (Chris Kirk - kirkch@gmail.com) know and, time allowing, I will bump it up my work stack.
+
+
+Tutorial on standard cacheing techniques.
+
+Cache Behaviours:
+
+  Supports versioned data (a form of optimistic lock)
+  Read behind caches
+  Write behind caches
+  Write through caches
+  Cache chaining
+  Serve stale value while refreshing asynchronously
+  Collects cache statistics
+  Pushes cache statistics
+
+
+Garbage Collection:
+
+  Soft references
+  Weak references
+  Off heap, but within JVM process. Which avoids GC costs entirely. The design of the off-heap cache integrates well with Netty, and it adheres to Netty's write-once principle; making it very easy to write network based caches that compete with the fastest of servers.
+
+
+Storage:
+
+  File
+  Off heap (away from GC overhead)
+  Compression
+
+
+Contacts
+--------
+
+Chris Kirk - kirkch@gmail.com (http://chriskirk.blogspot.co.uk/)
+
+
+The Legal Bit
+-------------
+
+This library is open source.
+You are welcome to use this library freely, with almost no restrictions. We only ask that you contribute back to the main library and give us feedback on your experiences. However that said, it should be made clear that the contributors to this library accept no responsibility for any hair loss, frustration or other foreseeable or unforeseeable consequences that may or may not follow. Use of this library, or code derived from its work is viewed as accepting these terms.
+Contributions to this library are made in the same spirit of above terms.

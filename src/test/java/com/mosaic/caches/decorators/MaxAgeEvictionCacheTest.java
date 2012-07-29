@@ -15,9 +15,9 @@ import static org.junit.Assert.*;
  *
  */
 @SuppressWarnings({"unchecked", "UnnecessaryBoxing", "UnusedAssignment"})
-public class TTLEvictionCacheTest extends BasicCacheTestCases {
-    public TTLEvictionCacheTest() {
-        super( new TTLEvictionCache( CacheFactory.singleThreadedInlineHashMapCache("junit",String.class,Integer.class), 5, new HashWheel(System.currentTimeMillis(),4,4)) );
+public class MaxAgeEvictionCacheTest extends BasicCacheTestCases {
+    public MaxAgeEvictionCacheTest() {
+        super( new MaxAgeEvictionCache( CacheFactory.singleThreadedInlineHashMapCache("junit",String.class,Integer.class), 5, new HashWheel(System.currentTimeMillis(),4,4)) );
     }
 
     @Test
@@ -54,21 +54,15 @@ public class TTLEvictionCacheTest extends BasicCacheTestCases {
         cache.put( "a", value1 );
         cache.put( "b", value2 );
 
-        long startMillis = System.currentTimeMillis();
-
         Thread.sleep(4);
 
-        if ( (System.currentTimeMillis()-startMillis) < 5 ) {   // timing logic added to avoid flickering test on slow/heavily loaded CI machines
-            assertEquals( new Integer(42), cache.get("a") );
-            cache.get("a");
+        assertEquals( new Integer(42), cache.get("a") );
+        cache.get("a");
 
-            Thread.sleep(5);
+        Thread.sleep(5);
 
-            if ( (System.currentTimeMillis()-startMillis) < 10 ) {
-                assertEquals( new Integer(42), cache.get("a") );
-                assertNull( cache.get("b") );
-            }
-        }
+        assertNull( cache.get("a") );
+        assertNull( cache.get("b") );
     }
 
 }
