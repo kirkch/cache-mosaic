@@ -26,6 +26,10 @@ public class HashWheel {
     private int currentWheelIndex;
     private int currentRotationCount;
 
+    public HashWheel() {
+        this( System.currentTimeMillis(), 128, 256 );
+    }
+
     public HashWheel( long startMillis ) {
         this( startMillis, 128, 256 );
     }
@@ -58,23 +62,18 @@ public class HashWheel {
      * (bucketGranularity)*wheelSize each time.
      */
     public Ticket register( long whenMillis, Runnable task ) {
-        int targetWheelIndex    = toWheelIndex( whenMillis );
-        int targetRotationCount = toRotationCount( whenMillis );
+        TaskNode taskNode = new TaskNode(task);
 
-        boolean hasBucketAlreadyFired = targetRotationCount < currentRotationCount || (targetRotationCount == currentRotationCount && targetWheelIndex < currentWheelIndex);
-        if ( hasBucketAlreadyFired ) {
-            task.run();
-
-            return null; // todo
-        }
-
-        HashWheelBucket bucket = hashWheel[targetWheelIndex];
-
-        return bucket.register( targetRotationCount, task );
+        return register( whenMillis, taskNode );
     }
 
     public void clear() {
+        for ( HashWheelBucket bucket : hashWheel ) {
+            bucket.clear();
+        }
 
+        currentRotationCount = 0;
+        currentWheelIndex    = 0;
     }
 
     public void applyBookKeeping( long nowMillis ) {
@@ -86,6 +85,26 @@ public class HashWheel {
 
             incrementWheel();
         }
+    }
+
+
+    private Ticket register( long whenMillis, TaskNode taskNode ) {
+        int targetWheelIndex    = toWheelIndex( whenMillis );
+        int targetRotationCount = toRotationCount( whenMillis );
+
+        boolean hasBucketAlreadyFired = targetRotationCount < currentRotationCount || (targetRotationCount == currentRotationCount && targetWheelIndex < currentWheelIndex);
+        if ( hasBucketAlreadyFired ) {
+            taskNode.run();
+
+            return ALREADY_FIRED_TICKET;
+        }
+
+        HashWheelBucket bucket = hashWheel[targetWheelIndex];
+
+        Ticket ticket = bucket.register( targetRotationCount, taskNode );
+        ticket.setOwningHashWheel( this );
+
+        return taskNode;
     }
 
     private void incrementWheel() {
@@ -106,27 +125,52 @@ public class HashWheel {
         return (int) (millis >> rotationBitShift);
     }
 
+    private static Ticket ALREADY_FIRED_TICKET = new Ticket() {
 
-    public static class Ticket {
-        private Ticket( TaskNode taskNode ) {
+        @Override
+        public boolean isScheduledToRun() {
+            return false;
         }
 
-        public void cancel() {
-
+        @Override
+        public boolean wasCancelled() {
+            return false;
         }
+
+        @Override
+        public boolean hasRun() {
+            return true;
+        }
+
+        public void cancel() {}
+        public void rescheduleTo( long whenMillis ) {}
+        public void setOwningHashWheel( HashWheel hashWheel ) {}
+    };
+
+
+    public static interface Ticket {
+
+        public boolean isScheduledToRun();
+        public boolean wasCancelled();
+        public boolean hasRun();
+
+        public void cancel();
+
+        public void rescheduleTo( long whenMillis );
+
+        public void setOwningHashWheel( HashWheel hashWheel );
     }
 
 
     private static class HashWheelBucket {
         private RotationList rotationList = new RotationList();
 
-        public Ticket register( int rotationSeq, Runnable task ) {
+        public Ticket register( int rotationSeq, TaskNode taskNode ) {
             DoubleLinkList<TaskNode> taskList = rotationList.selectOrCreateTaskListForRotation( rotationSeq );
 
-            TaskNode taskNode = new TaskNode( task );
             taskList.insertTail( taskNode );
 
-            return new Ticket( taskNode );
+            return taskNode;
         }
 
         public void trigger( int currentRotationCount ) {
@@ -137,11 +181,15 @@ public class HashWheel {
 
                 TaskNode nextTaskNode = rotationNode.getValue().head();
                 while ( nextTaskNode != null ) {
-                    nextTaskNode.getValue().run();
+                    nextTaskNode.run();
 
                     nextTaskNode = nextTaskNode.nextNode();
                 }
             }
+        }
+
+        public void clear() {
+            rotationList.clear();
         }
     }
 
@@ -181,6 +229,23 @@ public class HashWheel {
 
             return candidate.getValue();
         }
+
+        public void clear() {
+            RotationNode rotationNode = rotationList.head();
+
+            while ( rotationNode != null ) {
+                TaskNode taskNode = rotationNode.getValue().head();
+
+                while ( taskNode != null ) {
+                    taskNode.cancel();
+
+                    taskNode = rotationNode.getValue().head();
+                }
+
+                rotationNode.detachNode();
+                rotationNode = rotationList.head();
+            }
+        }
     }
 
     private static class RotationNode extends DoubleLinkList.Node<DoubleLinkList<TaskNode>, RotationNode> {
@@ -193,9 +258,55 @@ public class HashWheel {
         }
     }
 
-    private static class TaskNode extends DoubleLinkList.Node<Runnable, TaskNode> {
+    private static class TaskNode extends DoubleLinkList.Node<Runnable, TaskNode> implements Ticket {
+        private boolean   hasRun;
+        private boolean   wasCancelled;
+        private HashWheel owningHashWheel;
+
         public TaskNode( Runnable runnable ) {
             super( runnable );
+        }
+
+        public boolean isScheduledToRun() {
+            return isAttached() && !wasCancelled && !hasRun;
+        }
+
+        public boolean wasCancelled() {
+            return wasCancelled;
+        }
+
+        public boolean hasRun() {
+            return hasRun;
+        }
+
+        public void cancel() {
+            detachNode();
+
+            clear();
+
+            wasCancelled = true;
+        }
+
+        public void rescheduleTo( long whenMillis ) {
+            if ( !isScheduledToRun() ) {
+                return;
+            }
+
+            detachNode();
+            owningHashWheel.register( whenMillis, this );
+        }
+
+        public void setOwningHashWheel( HashWheel hashWheel ) {
+            owningHashWheel = hashWheel;
+        }
+
+        protected void run() {
+            if ( !hasRun ) {
+                getValue().run();
+
+                hasRun          = true;
+                owningHashWheel = null;
+            }
         }
     }
 }

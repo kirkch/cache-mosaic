@@ -1,6 +1,6 @@
 package com.mosaic.caches;
 
-import com.mosaic.caches.impl.DefaultCache;
+import com.mosaic.caches.impl.StoreCache;
 import com.mosaic.caches.impl.ReadWriteCache;
 import com.mosaic.caches.stores.InlineMapStore;
 import com.mosaic.caches.stores.MapStore;
@@ -21,7 +21,7 @@ public class CacheFactory {
     public static <K,V> Cache<K,V> singleThreadedDefaultCache( String cacheName, Class<K> keyType, Class<V> valueType ) {
         MapStore<K, V> store = new MapStore<K, V>( new HashMap<K, V>() );
 
-        return new DefaultCache<K,V>( cacheName, store );
+        return new StoreCache<K,V>( cacheName, store );
     }
 
     /**
@@ -37,7 +37,7 @@ public class CacheFactory {
     public static <K,V> Cache<K,V> singleThreadedInlineHashMapCache( String cacheName, Class<K> keyType, Class<V> valueType ) {
         InlineMapStore<K, V> store = new InlineMapStore<K, V>();
 
-        return new DefaultCache<K,V>( cacheName, store );
+        return new StoreCache<K,V>( cacheName, store );
     }
 
     /**
@@ -47,7 +47,7 @@ public class CacheFactory {
     public static <K,V> Cache<K,V> threadSafeConcurrentMapCache( String cacheName, Class<K> keyType, Class<V> valueType ) {
         MapStore<K, V> store = new MapStore<K, V>( new ConcurrentHashMap<K, V>() );
 
-        return new DefaultCache<K,V>( cacheName, store );
+        return new StoreCache<K,V>( cacheName, store );
     }
 
     /**

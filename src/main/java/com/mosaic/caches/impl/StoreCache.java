@@ -12,15 +12,15 @@ import java.util.HashMap;
  * It should be noted that ConcurrentHashMap is approximately 50% slower than java.util.HashMap. However HashMap is
  * not thread safe.
  */
-public class DefaultCache<K,V> extends BaseCache<K,V> {
+public class StoreCache<K,V> extends BaseCache<K,V> {
 
     private Store<K,V> store;
 
-    public DefaultCache( String name ) {
+    public StoreCache( String name ) {
         this( name, new MapStore<K,V>(new HashMap<K,V>()) );
     }
 
-    public DefaultCache( String cacheName, Store<K, V> underlyingStore ) {
+    public StoreCache( String cacheName, Store<K, V> underlyingStore ) {
         super( cacheName );
 
         this.store     = underlyingStore;

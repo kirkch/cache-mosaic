@@ -1,7 +1,7 @@
 package com.mosaic.caches.decorators;
 
 import com.mosaic.caches.impl.BasicCacheTestCases;
-import com.mosaic.caches.impl.DefaultCache;
+import com.mosaic.caches.impl.StoreCache;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class LIFOEvictionCacheTest extends BasicCacheTestCases {
 
     public LIFOEvictionCacheTest() {
-        super( new LIFOEvictionCache( new DefaultCache("test-cache"), 3 ) );
+        super( new LIFOEvictionCache( new StoreCache("test-cache"), 3 ) );
     }
 
     @Test

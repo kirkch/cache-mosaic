@@ -114,12 +114,24 @@ public class DoubleLinkList<N extends DoubleLinkList.Node> {
             return value;
         }
 
+        public void clear() {
+            this.value = null;
+        }
+
         public SELF nextNode() {
             return next;
         }
 
         public SELF previousNode() {
             return prev;
+        }
+
+        public boolean isAttached() {
+            return owningList != null;
+        }
+
+        public boolean isDetached() {
+            return owningList == null;
         }
 
         public boolean detachNode() {

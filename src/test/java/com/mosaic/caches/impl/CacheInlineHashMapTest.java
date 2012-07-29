@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CacheInlineHashMapTest extends BasicCacheTestCases {
     public CacheInlineHashMapTest() {
-        super( new DefaultCache<String, Integer>("test-cache", new InlineMapStore()) );
+        super( new StoreCache<String, Integer>("test-cache", new InlineMapStore()) );
     }
 
     @Test

@@ -7,10 +7,10 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class CacheHashMapTest extends BasicCacheTestCases {
+public class JUMapTest extends BasicCacheTestCases {
 
-    public CacheHashMapTest() {
-        super( new DefaultCache<String, Integer>("test-cache") );
+    public JUMapTest() {
+        super( new StoreCache<String, Integer>("test-cache") );
     }
 
     @Test

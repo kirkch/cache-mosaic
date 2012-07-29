@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 /**
  *
  */
-public class DoubleLinkedListTest {
+public class DoubleLinkListTest {
 
     private DoubleLinkList<MyNode> list = new DoubleLinkList<MyNode>();
 
@@ -741,6 +741,29 @@ public class DoubleLinkedListTest {
         assertListEquals( b, a );
     }
 
+// isAttached
+
+    @Test
+    public void isAttachedNode() {
+        MyNode a = new MyNode("a");
+
+        list.insertTail( a );
+
+        assertTrue( a.isAttached() );
+    }
+
+    @Test
+    public void isDettachedNode() {
+        MyNode a = new MyNode("a");
+
+        assertTrue( a.isDetached() );
+
+        list.insertTail( a );
+        a.detachNode();
+
+        assertTrue( a.isDetached() );
+    }
+
 // shift nodes around within a one node list
 
     @Test
@@ -779,6 +802,8 @@ public class DoubleLinkedListTest {
 
         for ( MyNode n : expectedNodes ) {
             assertTrue( pos.getValue() + " was not equal to " + n.getValue(), pos == n );
+            assertTrue( pos.isAttached() );
+            assertFalse( pos.isDetached() );
 
             pos = pos.nextNode();
         }
