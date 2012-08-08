@@ -9,7 +9,8 @@ import org.junit.Test;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  *

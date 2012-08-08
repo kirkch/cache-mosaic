@@ -17,7 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- property does not inherit from root.. revise when mvn 3.1 is released CK -->
 	</properties>
 
-        <build>
+    <build>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,7 +49,7 @@
     <dependencies>
         <dependency>
             <groupId>com.mosaic</groupId>
-            <artifactId>jtunit</artifactId>
+            <artifactId>threadtesting-mosaic</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
