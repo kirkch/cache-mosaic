@@ -238,6 +238,18 @@ public class Bytes {
         return codec.readFrom( this );
     }
 
+    public <T> T readObject( int index, Codec<T> codec ) {
+        int prevIndex = getPosition();
+
+        try {
+            setPosition(index);
+
+            return codec.readFrom( this );
+        } finally {
+            setPosition( prevIndex );
+        }
+    }
+
     public void writeByte( byte v ) {
         buf.put( v );
     }

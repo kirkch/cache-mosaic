@@ -194,6 +194,27 @@ public class BytesTest {
         assertEquals( 'b', buf.readByte() );
     }
 
+    @Test
+    public void writeByteByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 2 );
+
+        buf.writeByte( 1, (byte) 'a' );
+
+        assertEquals(  0,  buf.getPosition() );
+        assertEquals(  0,  buf.readByte() );
+        assertEquals( 'a', buf.readByte() );
+    }
+
+    @Test
+    public void writeByteByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 2 );
+
+        buf.writeByte( 1, (byte) 'a' );
+
+        assertEquals( 'a', buf.readByte(1) );
+        assertEquals(  0,  buf.getPosition() );
+    }
+
 // Booleans
     @Test
     public void blankBuffer10_writeBoolean_expectgetPosition1() {
@@ -302,6 +323,27 @@ public class BytesTest {
         assertTrue( buf.readBooleanNbl() == Boolean.FALSE );
     }
 
+    @Test
+    public void writeBooleanByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 2 );
+
+        buf.writeBoolean( 1, true );
+
+        assertEquals(     0, buf.getPosition() );
+        assertEquals( false, buf.readBoolean() );
+        assertEquals( true , buf.readBoolean() );
+    }
+
+    @Test
+    public void writeBooleanByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 2 );
+
+        buf.writeBoolean( 1, true );
+
+        assertEquals( true, buf.readBoolean(1) );
+        assertEquals(    0, buf.getPosition() );
+    }
+
     
 
 // Characters
@@ -386,6 +428,27 @@ public class BytesTest {
     }
 
     @Test
+    public void writeCharacterByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeCharacter( 2, 'a' );
+
+        assertEquals(  0,  buf.getPosition() );
+        assertEquals(  0,  buf.readCharacter() );
+        assertEquals( 'a', buf.readCharacter() );
+    }
+
+    @Test
+    public void writeCharacterByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeCharacter( 2, 'a' );
+
+        assertEquals( 'a', buf.readCharacter(2) );
+        assertEquals(  0,  buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullCharacterNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 2 );
 
@@ -405,6 +468,27 @@ public class BytesTest {
         buf.setPosition(0);
 
         assertEquals( new Character( 'a' ), buf.readCharacterNbl() );
+    }
+
+    @Test
+    public void writeCharacterNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeCharacterNbl( 2, 'a' );
+
+        assertEquals(  0,  buf.getPosition() );
+        assertEquals(  0,  buf.readCharacter() );
+        assertEquals( 'a', buf.readCharacter() );
+    }
+
+    @Test
+    public void writeCharacterNblByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeCharacterNbl( 2, 'a' );
+
+        assertEquals( new Character('a'), buf.readCharacterNbl(2) );
+        assertEquals(  0,  buf.getPosition() );
     }
 
 // Shorts
@@ -489,6 +573,27 @@ public class BytesTest {
     }
 
     @Test
+    public void writeShortByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeShort( 2, (short) 16 );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals(  0, buf.readShort() );
+        assertEquals( 16, buf.readShort() );
+    }
+
+    @Test
+    public void writeShortByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeShort( 2, (short) 16 );
+
+        assertEquals( 16, buf.readShort(2) );
+        assertEquals(  0,  buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullShortNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 1 );
 
@@ -521,10 +626,30 @@ public class BytesTest {
 
         }
     }
+
+    @Test
+    public void writeShortNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeShortNbl( 1, (short) 16 );
+
+        assertEquals(                     0, buf.getPosition() );
+        assertEquals( new Short((short) 16), buf.readShortNbl(1) );
+    }
+
+    @Test
+    public void writeShortNblByIndex_readBackValueByIndex() {
+        Bytes buf = new Bytes( 4 );
+
+        buf.writeShortNbl( 1, (short) 16 );
+
+        assertEquals( new Short((short) 16), buf.readShortNbl(1) );
+        assertEquals(                     0,  buf.getPosition() );
+    }
     
 // Integers
     @Test
-    public void blankBuffer10_writeInt_expectgetPosition1() {
+    public void blankBuffer10_writeInt_expectGetPosition1() {
         Bytes buf = new Bytes( 10 );
 
         buf.writeInt( 43 );
@@ -604,6 +729,17 @@ public class BytesTest {
     }
 
     @Test
+    public void writeIntByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 5 );
+
+        buf.writeInt( 1, 16 );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( 16, buf.readInt(1) );
+        assertEquals(  0, buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullIntNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 1 );
 
@@ -635,6 +771,17 @@ public class BytesTest {
         } catch ( BufferOverflowException ex ) {
 
         }
+    }
+
+    @Test
+    public void writeIntNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 6 );
+
+        buf.writeIntNbl( 1, 16 );
+
+        assertEquals(               0, buf.getPosition() );
+        assertEquals( new Integer(16), buf.readIntNbl(1) );
+        assertEquals(               0, buf.getPosition() );
     }
     
 // Longs
@@ -719,6 +866,17 @@ public class BytesTest {
     }
 
     @Test
+    public void writeLongByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeLong( 1, 16 );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( 16, buf.readLong(1) );
+        assertEquals(  0, buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullLongNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 1 );
 
@@ -750,6 +908,17 @@ public class BytesTest {
         } catch ( BufferOverflowException ex ) {
 
         }
+    }
+
+    @Test
+    public void writeLongNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeLongNbl( 1, 16L );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( new Long(16), buf.readLongNbl(1) );
+        assertEquals(  0, buf.getPosition() );
     }
     
 // Floats
@@ -834,6 +1003,17 @@ public class BytesTest {
     }
 
     @Test
+    public void writeFloatByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeFloat( 1, 4.2f );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( 4.2, buf.readFloat(1), 0.001 );
+        assertEquals(  0, buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullFloatNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 1 );
 
@@ -865,6 +1045,17 @@ public class BytesTest {
         } catch ( BufferOverflowException ex ) {
 
         }
+    }
+
+    @Test
+    public void writeFloatNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeFloatNbl( 1, 4.2f );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( new Float(4.2), buf.readFloatNbl(1), 0.001 );
+        assertEquals(  0, buf.getPosition() );
     }
     
 // Doubles
@@ -949,6 +1140,17 @@ public class BytesTest {
     }
 
     @Test
+    public void writeDoubleByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeDouble( 1, 4.2 );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( 4.2, buf.readDouble(1), 0.001 );
+        assertEquals(  0, buf.getPosition() );
+    }
+
+    @Test
     public void blankBuffer1_writeNullDoubleNbl_expectToBeAbleToReadItBack() {
         Bytes buf = new Bytes( 1 );
 
@@ -980,6 +1182,17 @@ public class BytesTest {
         } catch ( BufferOverflowException ex ) {
 
         }
+    }
+
+    @Test
+    public void writeDoubleNblByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeDoubleNbl( 1, 4.2 );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( new Double(4.2), buf.readDoubleNbl(1), 0.001 );
+        assertEquals(  0, buf.getPosition() );
     }
 
 // Strings
@@ -1093,6 +1306,17 @@ public class BytesTest {
         writeReadString( 4, 0xFFFFFF, 0x400000 );
     }
 
+    @Test
+    public void writeStringByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 10 );
+
+        buf.writeString( 1, "hi" );
+
+        assertEquals(  0, buf.getPosition() );
+        assertEquals( "hi", buf.readString(1) );
+        assertEquals(  0, buf.getPosition() );
+    }
+
     private void writeReadString( int sizeBlockBytes, int bufSize, int stringLength ) {
         Bytes buf = new Bytes( bufSize );
 
@@ -1125,6 +1349,21 @@ public class BytesTest {
         buf.setPosition(0);
 
         AccountPojo acc = buf.readObject( AccountPojoCodec.INSTANCE );
+        assertEquals( "id1",   acc.getAccountId() );
+        assertEquals( "name1", acc.getAccountName() );
+        assertEquals( 105,     acc.getBalance() );
+    }
+
+    @Test
+    public void writeObjectByIndex_expectValueToBeWrittenAndPositionToNotChange() {
+        Bytes buf = new Bytes( 160 );
+
+        buf.writeObject( 1, AccountPojoCodec.INSTANCE, new AccountPojo("id1", "name1", 105) );
+
+        assertEquals( 0, buf.getPosition() );
+
+        AccountPojo acc = buf.readObject( 1, AccountPojoCodec.INSTANCE );
+        assertEquals( 0, buf.getPosition() );
         assertEquals( "id1",   acc.getAccountId() );
         assertEquals( "name1", acc.getAccountName() );
         assertEquals( 105,     acc.getBalance() );
