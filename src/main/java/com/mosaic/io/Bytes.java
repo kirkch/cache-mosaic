@@ -1,566 +1,150 @@
 package com.mosaic.io;
 
-import com.mosaic.caches.util.Validate;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-
 /**
  *
  */
-public class Bytes {
+public interface Bytes {
+    Bytes setPosition( int i );
 
-    private static final byte BOOLEAN_NULL_BYTE = (byte) 0xFF;
+    int getPosition();
 
-    public static Bytes newBuffer( int bufferSizeBytes ) {
-        return new Bytes( bufferSizeBytes );
-    }
+    Bytes narrowedView( int fromIndex, int numBytes );
 
+    int capacity();
 
-    private ByteBuffer buf;
+    byte readByte();
 
-    public Bytes( int bufferSizeBytes ) {
-        Validate.gtZero( bufferSizeBytes, "bufferSizeBytes" );
+    byte readByte( int index );
 
-        this.buf = ByteBuffer.allocateDirect( bufferSizeBytes );
+    boolean readBoolean();
 
-    }
+    boolean readBoolean( int index );
 
-    public Bytes( ByteBuffer buf ) {
-        this.buf = buf.duplicate();
-    }
+    Boolean readBooleanNbl();
 
-    public Bytes( Bytes buf ) {
-        this.buf = buf.buf.duplicate();
-    }
+    Boolean readBooleanNbl( int index );
 
+    char readCharacter();
 
-    public Bytes setPosition( int i ) {
-        buf.position( i );
+    char readCharacter( int index );
 
-        return this;
-    }
+    Character readCharacterNbl();
 
-    public int getPosition() {
-        return buf.position();
-    }
+    Character readCharacterNbl( int index );
 
-    public Bytes narrowedView( int fromIndex, int numBytes ) {
-        buf.position( fromIndex );
-        buf.limit( fromIndex+numBytes );
+    short readShort();
 
-        return new Bytes(buf.slice());
-    }
+    short readShort( int index );
 
-    public int capacity() {
-        return buf.capacity();
-    }
+    Short readShortNbl();
 
-    public byte readByte() {
-        return buf.get();
-    }
+    Short readShortNbl( int index );
 
-    public byte readByte( int index ) {
-        return buf.get( index );
-    }
+    int readInt();
 
-    public boolean readBoolean() {
-        return buf.get() == 1;
-    }
+    int readInt( int index );
 
-    public boolean readBoolean( int index ) {
-        return buf.get(index) == 1;
-    }
+    Integer readIntNbl();
 
-    public Boolean readBooleanNbl() {
-        byte b = buf.get();
+    Integer readIntNbl( int index );
 
-        return b == BOOLEAN_NULL_BYTE ? null : b==1;
-    }
+    long readLong();
 
-    public Boolean readBooleanNbl( int index ) {
-        byte b = buf.get( index );
+    long readLong( int index );
 
-        return b == BOOLEAN_NULL_BYTE ? null : b==1;
-    }
+    Long readLongNbl();
 
-    public char readCharacter() {
-        return buf.getChar();
-    }
+    Long readLongNbl( int index );
 
-    public char readCharacter( int index ) {
-        return buf.getChar( index );
-    }
+    float readFloat();
 
-    public Character readCharacterNbl() {
-        char c = buf.getChar();
+    float readFloat( int index );
 
-        return c == 0 ? null : c;
-    }
+    Float readFloatNbl();
 
-    public Character readCharacterNbl( int index ) {
-        char c = buf.getChar( index );
+    Float readFloatNbl( int index );
 
-        return c == 0 ? null : c;
-    }
+    double readDouble();
 
-    public short readShort() {
-        return buf.getShort();
-    }
+    double readDouble( int index );
 
-    public short readShort(int index) {
-        return buf.getShort(index);
-    }
-
-    public Short readShortNbl() {
-        boolean nullFlag = readBoolean();
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readShort();
-    }
-
-    public Short readShortNbl( int index ) {
-        boolean nullFlag = readBoolean(index);
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readShort(index+1);
-    }
-
-    public int readInt() {
-        return buf.getInt();
-    }
-
-    public int readInt( int index ) {
-        return buf.getInt( index );
-    }
-
-    public Integer readIntNbl() {
-        boolean nullFlag = readBoolean();
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readInt();
-    }
-
-    public Integer readIntNbl( int index ) {
-        boolean nullFlag = readBoolean( index );
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readInt( index+1 );
-    }
-
-    public long readLong() {
-        return buf.getLong();
-    }
-
-    public long readLong( int index ) {
-        return buf.getLong( index );
-    }
-
-    public Long readLongNbl() {
-        boolean nullFlag = readBoolean();
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readLong();
-    }
-
-    public Long readLongNbl( int index ) {
-        boolean nullFlag = readBoolean( index );
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readLong( index+1 );
-    }
-
-    public float readFloat() {
-        return buf.getFloat();
-    }
-
-    public float readFloat( int index ) {
-        return buf.getFloat( index );
-    }
-
-    public Float readFloatNbl() {
-        boolean nullFlag = readBoolean();
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readFloat();
-    }
-
-    public Float readFloatNbl( int index ) {
-        boolean nullFlag = readBoolean( index );
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readFloat( index+1 );
-    }
-
-    public double readDouble() {
-        return buf.getDouble();
-    }
-
-    public double readDouble( int index ) {
-        return buf.getDouble( index );
-    }
-
-    public Double readDoubleNbl() {
-        boolean nullFlag = readBoolean();
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readDouble();
-    }
-
-    public Double readDoubleNbl( int index ) {
-        boolean nullFlag = readBoolean( index );
-        if ( nullFlag ) {
-            return null;
-        }
-
-        return readDouble( index+1 );
-    }
-
-    public <T> T readObject( Codec<T> codec ) {
-        return codec.readFrom( this );
-    }
-
-    public <T> T readObject( int index, Codec<T> codec ) {
-        int prevIndex = getPosition();
-
-        try {
-            setPosition(index);
-
-            return codec.readFrom( this );
-        } finally {
-            setPosition( prevIndex );
-        }
-    }
-
-    public void writeByte( byte v ) {
-        buf.put( v );
-    }
-
-    public void writeByte( int index, byte v ) {
-        buf.put( index, v );
-    }
-
-    public void writeBoolean( boolean v ) {
-        buf.put( (byte) (v ? 1 : 0) );
-    }
-
-    public void writeBoolean( int index, boolean v ) {
-        buf.put( index, (byte) (v ? 1 : 0) );
-    }
-
-    public void writeBooleanNbl( Boolean v ) {
-        if ( v == null ) {
-            buf.put( BOOLEAN_NULL_BYTE );
-        } else {
-            buf.put( (byte) (v ? 1 : 0) );
-        }
-    }
-
-    public void writeBooleanNbl( int index, Boolean v ) {
-        if ( v == null ) {
-            buf.put( index, BOOLEAN_NULL_BYTE );
-        } else {
-            buf.put( index, (byte) (v ? 1 : 0) );
-        }
-    }
-
-    public void writeCharacter( char v ) {
-        buf.putChar( v );
-    }
-
-    public void writeCharacter( int index, char v ) {
-        buf.putChar( index, v );
-    }
-
-    public void writeCharacterNbl( Character v ) {
-        buf.putChar( v == null ? 0 : v );
-    }
-
-    public void writeCharacterNbl( int index, Character v ) {
-        buf.putChar( index, v == null ? 0 : v );
-    }
-
-    public void writeShort( short v ) {
-        buf.putShort( v );
-    }
-
-    public void writeShort( int index, short v ) {
-        buf.putShort( index, v );
-    }
-
-    public void writeShortNbl( Short v ) {
-        if ( v == null ) {
-            writeBoolean( true );
-            return;
-        }
-
-        writeBoolean( false );
-        writeShort( v );
-    }
-
-    public void writeShortNbl( int index, Short v ) {
-        if ( v == null ) {
-            writeBoolean( index, true );
-            return;
-        }
-
-        writeBoolean( index, false );
-        writeShort( index+1, v );
-    }
-
-    public void writeInt( int v ) {
-        buf.putInt( v );
-    }
-
-    public void writeInt( int index, int v ) {
-        buf.putInt( index, v );
-    }
-
-    public void writeIntNbl( Integer v ) {
-        if ( v == null ) {
-            writeBoolean( true );
-            return;
-        }
-
-        writeBoolean( false );
-        writeInt( v );
-    }
-
-    public void writeIntNbl( int index, Integer v ) {
-        if ( v == null ) {
-            writeBoolean( index, true );
-            return;
-        }
-
-        writeBoolean( index, false );
-        writeInt( index+1, v );
-    }
-
-    public void writeLong( long v ) {
-        buf.putLong( v );
-    }
-
-    public void writeLong( int index, long v ) {
-        buf.putLong( index, v );
-    }
-
-    public void writeLongNbl( Long v ) {
-        if ( v == null ) {
-            writeBoolean( true );
-            return;
-        }
-
-        writeBoolean( false );
-        writeLong( v );
-    }
-
-    public void writeLongNbl( int index, Long v ) {
-        if ( v == null ) {
-            writeBoolean( index, true );
-            return;
-        }
-
-        writeBoolean( index, false );
-        writeLong( index+1, v );
-    }
-
-    public void writeFloat( float v ) {
-        buf.putFloat( v );
-    }
-
-    public void writeFloat( int index, float v ) {
-        buf.putFloat( index, v );
-    }
-
-    public void writeFloatNbl( Float v ) {
-        if ( v == null ) {
-            writeBoolean( true );
-            return;
-        }
-
-        writeBoolean( false );
-        writeFloat( v );
-    }
-
-    public void writeFloatNbl( int index, Float v ) {
-        if ( v == null ) {
-            writeBoolean( index, true );
-            return;
-        }
-
-        writeBoolean( index, false );
-        writeFloat( index+1, v );
-    }
-
-    public void writeDouble( double v ) {
-        buf.putDouble( v );
-    }
-
-    public void writeDouble( int index, double v ) {
-        buf.putDouble( index, v );
-    }
-
-    public void writeDoubleNbl( Double v ) {
-        if ( v == null ) {
-            writeBoolean( true );
-            return;
-        }
-
-        writeBoolean( false );
-        writeDouble( v );
-    }
-
-    public void writeDoubleNbl( int index, Double v ) {
-        if ( v == null ) {
-            writeBoolean( index, true );
-            return;
-        }
-
-        writeBoolean( index, false );
-        writeDouble( index+1, v );
-    }
-
-    public void writeString( String v ) {
-        // Strings are stored:   string length first then the string bytes in UTF-8
-        // the string length is variable length, between 1 and 4 bytes; the first two bits specify how many bytes
-        // null and empty string are a special case, where the entire string can be encoded into the string length byte
-        if ( v == null ) {              // 0011 1111
-            writeByte( (byte) 0x3F );
-            return;
-        } else if ( v.isEmpty() ) {
-            writeByte( (byte) 0x00 );
-            return;
-        }
-
-        byte[] utf8Bytes = toBytes( v );
-        if ( utf8Bytes.length <  0x3F ) {
-            byte mask = (byte) utf8Bytes.length;
-            writeByte( mask );
-        } else if ( utf8Bytes.length <=  0x3FFF ) {
-            int mask = utf8Bytes.length | 0x4000;
-            writeShort( (short) mask );
-        } else if ( utf8Bytes.length <=  0x3FFFFF ) {
-            byte byte3 = (byte)  (utf8Bytes.length  & 0x0000FF);
-            byte byte2 = (byte) ((utf8Bytes.length  & 0x00FF00) >>  8);
-            byte byte1 = (byte) ((utf8Bytes.length  & 0x3F0000) >> 16);
-
-            buf.put( (byte) (byte1 | 0x80) );
-            buf.put( byte2 );
-            buf.put( byte3 );
-        } else {
-            writeInt( utf8Bytes.length | 0xC0000000 );
-        }
-
-        buf.put( utf8Bytes );
-    }
-
-    public void writeString( int index, String v ) {
-        int prevIndex = buf.position();
-
-        try {
-            setPosition( index );
-            writeString(v);
-        } finally {
-            buf.position( prevIndex );
-        }
-    }
-
-    public String readString() {
-        final byte firstByte = readByte();
-        if ( firstByte == 0x3F ) {
-            return null;
-        } else if ( firstByte == 0x00 ) {
-            return "";
-        }
-
-        int strLenEncodingType = (firstByte & 0xC0) >> 6;
-        int byteLen = 0;
-
-        switch ( strLenEncodingType ) {
-            case 0:
-                byteLen  = firstByte & 0x3F;
-                break;
-            case 1:
-                byteLen  = (firstByte & 0x3F) << 8;
-                byteLen |= buf.get() & 0xFF;
-                break;
-            case 2:
-                byteLen  = ((firstByte & 0x3F) << 16) & 0xFF0000;
-                byteLen |= (buf.get() <<  8) & 0x00FF00;
-                byteLen |= buf.get() & 0xFF;
-                break;
-            case 3:
-                buf.position( buf.position()-1 );
-
-                int v2 = buf.getInt();
-                byteLen = v2 & 0x3FFFFFFF;
-                break;
-            default: throw new IllegalStateException();
-        }
-
-        byte[] utf8Bytes = new byte[byteLen];
-        buf.get( utf8Bytes, 0, byteLen );
-
-        return toString( utf8Bytes );
-    }
-
-    public String readString( int index ) {
-        int prevIndex = buf.position();
-
-        try {
-            setPosition( index );
-            return readString();
-        } finally {
-            buf.position( prevIndex );
-        }
-    }
-
-    public <T> void writeObject( Codec<T> codec, T obj ) {
-        codec.writeTo( this, obj );
-    }
-
-    public <T> void writeObject( int index, Codec<T> codec, T obj ) {
-        int prevIndex = buf.position();
-
-        try {
-            buf.position( index );
-            codec.writeTo( this, obj );
-        } finally {
-            buf.position( prevIndex );
-        }
-    }
-
-    private static byte[] toBytes( String v ) {
-        try {
-            return v.getBytes( "UTF-8" );
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException( e );
-        }
-    }
-
-    private static String toString( byte[] utf8Bytes ) {
-        try {
-            return new String( utf8Bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException( e );
-        }
-    }
+    Double readDoubleNbl();
+
+    Double readDoubleNbl( int index );
+
+    <T> T readObject( Codec<T> codec );
+
+    <T> T readObject( int index, Codec<T> codec );
+
+    void writeByte( byte v );
+
+    void writeByte( int index, byte v );
+
+    void writeBoolean( boolean v );
+
+    void writeBoolean( int index, boolean v );
+
+    void writeBooleanNbl( Boolean v );
+
+    void writeBooleanNbl( int index, Boolean v );
+
+    void writeCharacter( char v );
+
+    void writeCharacter( int index, char v );
+
+    void writeCharacterNbl( Character v );
+
+    void writeCharacterNbl( int index, Character v );
+
+    void writeShort( short v );
+
+    void writeShort( int index, short v );
+
+    void writeShortNbl( Short v );
+
+    void writeShortNbl( int index, Short v );
+
+    void writeInt( int v );
+
+    void writeInt( int index, int v );
+
+    void writeIntNbl( Integer v );
+
+    void writeIntNbl( int index, Integer v );
+
+    void writeLong( long v );
+
+    void writeLong( int index, long v );
+
+    void writeLongNbl( Long v );
+
+    void writeLongNbl( int index, Long v );
+
+    void writeFloat( float v );
+
+    void writeFloat( int index, float v );
+
+    void writeFloatNbl( Float v );
+
+    void writeFloatNbl( int index, Float v );
+
+    void writeDouble( double v );
+
+    void writeDouble( int index, double v );
+
+    void writeDoubleNbl( Double v );
+
+    void writeDoubleNbl( int index, Double v );
+
+    void writeString( String v );
+
+    void writeString( int index, String v );
+
+    String readString();
+
+    String readString( int index );
+
+    <T> void writeObject( Codec<T> codec, T obj );
+
+    <T> void writeObject( int index, Codec<T> codec, T obj );
 }

@@ -1,11 +1,11 @@
 package com.mosaic.io.mmu;
 
-import com.mosaic.io.Bytes;
+import com.mosaic.io.NioBytes;
 
 /**
  *
  */
-public class AllocatedBytes extends Bytes {
+public class AllocatedBytes extends NioBytes {
 
     // trade off
     // to avoid ptr look up overhead the translation needs to be done ahead of this objects creation
@@ -26,7 +26,7 @@ public class AllocatedBytes extends Bytes {
 
     private long ptr;
 
-    public AllocatedBytes( long ptr, Bytes bytes ) {
+    public AllocatedBytes( long ptr, NioBytes bytes ) {
         super( bytes );
 
         this.ptr = ptr;

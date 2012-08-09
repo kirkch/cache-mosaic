@@ -1,6 +1,7 @@
 package com.mosaic.io.mmu;
 
 import com.mosaic.io.Bytes;
+import com.mosaic.io.NioBytes;
 
 import java.nio.ByteBuffer;
 
@@ -27,7 +28,7 @@ public class MemoryRegion {
     private static final int OBJECTOVERHEAD_BYTES = 2*INT_SIZE_BYTES;
 
     public static MemoryRegion offheap( int sizeBytes ) {
-        return new MemoryRegion( new Bytes(ByteBuffer.allocateDirect(sizeBytes)) );
+        return new MemoryRegion( new NioBytes(ByteBuffer.allocateDirect(sizeBytes)) );
     }
 
     public static MemoryRegion memoryMappedFil( int sizeBytes, String file ) {
@@ -150,7 +151,8 @@ public class MemoryRegion {
         buf.writeInt( virtualPointer );
         buf.writeInt( numDataBytes );
 
-        return new AllocatedBytes( virtualPointer, buf.narrowedView(dataRegionPointer+OBJECTOVERHEAD_BYTES, numDataBytes) );
+//        return new AllocatedBytes( virtualPointer, buf.narrowedView(dataRegionPointer+OBJECTOVERHEAD_BYTES, numDataBytes) );
+        return null;
     }
 
     /**
