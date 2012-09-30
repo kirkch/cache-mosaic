@@ -6,6 +6,9 @@ import com.mosaic.io.NioBytes;
 import java.nio.ByteBuffer;
 
 import static com.mosaic.io.IOConstants.INT_SIZE_BYTES;
+import static com.mosaic.io.IOConstants.NULL;
+
+// todo NB this class is not complete; work shelved due to other commitments until further notice
 
 /**
  * Manages a region of memory up to 2 gigabytes in size. Compaction occurs gradually as a side effect of other calls,
@@ -25,7 +28,8 @@ public class MemoryRegion {
 
 
 
-    private static final int OBJECTOVERHEAD_BYTES = 2*INT_SIZE_BYTES;
+    private static final int OBJECTOVERHEAD_BYTES    = 2*INT_SIZE_BYTES;
+    private static final int POINTER_VERSION_BITMASK = 3 << 30;  // sets the top 2 bits to true
 
     public static MemoryRegion offheap( int sizeBytes ) {
         return new MemoryRegion( new NioBytes(ByteBuffer.allocateDirect(sizeBytes)) );
@@ -82,6 +86,12 @@ public class MemoryRegion {
 //
 // Pointers, once created are never moved. However pointers may be freed and reused. New pointers will be allocated
 // from the gaps in the pointer region before extending the region.
+//
+// Pointers within a memory region are 32bits long. The Virtual Pointer region holds virtual pointer to actual data location
+// pointers which are also 32 bits long. A virtual pointer reserves two bits (bits indexes 30 and 31) as an allocation
+// sequence so that reuse of a pointer address can be detected (so long as the location is not reused four times in a row
+// between checks). This means that a Memory Region can store up to 2 gigabits of information spread over a maximum of
+// 1 billion objects. Pretty much until the two data regions start to overlap.
 
 
     private Bytes buf;
@@ -103,6 +113,7 @@ public class MemoryRegion {
     int earliestGapInPointerRegionIndex()          { return buf.readInt( EARLIESTGAPINPOINTERREGION_INDEX ); }
     int numberOfObjectsInDataRegion()              { return buf.readInt( NUMBEROFOBJECTSINDATAREGIN_INDEX ); }
     int unallocatedDataRegionByteCount()           { return buf.readInt( UNALLOCATEDBYTESCOUNT_INDEX );      }
+    int sizeOfMemoryRegion()                       { return buf.capacity(); }
 
     void setDataFormatVersion(int v)               { buf.writeInt( DATAFORMATVERSION_INDEX, v );          }
     void setEndOfDataRegionIndex(int v)            { buf.writeInt( ENDOFDATAREGION_INDEX, v );            }
@@ -151,8 +162,19 @@ public class MemoryRegion {
         buf.writeInt( virtualPointer );
         buf.writeInt( numDataBytes );
 
-//        return new AllocatedBytes( virtualPointer, buf.narrowedView(dataRegionPointer+OBJECTOVERHEAD_BYTES, numDataBytes) );
-        return null;
+        return new AllocatedBytes( virtualPointer, this );
+    }
+
+    public void release() {
+        //todo
+    }
+
+    /**
+     * Everytime the memory region moves objects around due to compaction, the version number is incremented. This allows
+     * AllocatedBuffer to detect when it may be holding onto a view that has been moved.
+     */
+    int getVersion() {
+        return 0;
     }
 
     /**
@@ -162,6 +184,52 @@ public class MemoryRegion {
      */
     public AllocatedBytes fetch( int pointer ) {
         return null;
+    }
+
+
+
+    /**
+     * Internal version of fetch that returns a Bytes object pointing directly into the data region. This view could become
+     * invalid due to compactions so check the memory region version before reusing this view.
+     *
+     * @package provides internal access to a part of MemoryRegion needed by AllocatedBytes
+     */
+    Bytes fetchUnderlyingView( int virtualPointerOffset ) {
+        int dataPointer = lookupVirtualPointer( virtualPointerOffset );
+
+        return null;
+    }
+
+    void throwIfInvalidPointer( int virtualPointerOffset ) {
+        lookupVirtualPointer( virtualPointerOffset );
+    }
+
+    /**
+     * Translates a virtual pointer (as an offset from the beginning of the pointer region) to the direct index into the
+     * nio buffer. Where the object begins.
+     *
+     * @return the data pointer
+     */
+    private int lookupVirtualPointer( int virtualPointerOffset ) {
+        if ( virtualPointerOffset >= endOfPointerRegionIndex() ) {
+            throw new IllegalArgumentException( String.format("specified pointer '%' is out of bounds") );
+        }
+
+        int virtualPointer = sizeOfMemoryRegion() - (virtualPointerOffset * INT_SIZE_BYTES);
+        int dataPointer    = buf.readInt( virtualPointer );
+
+        if ( dataPointer == NULL ) {
+            throw new IllegalArgumentException( String.format("specified pointer '%' has been deallocated") );
+        }
+
+        int vpVersion = virtualPointer & POINTER_VERSION_BITMASK;
+        int dpVersion = dataPointer & POINTER_VERSION_BITMASK;
+
+        if ( vpVersion != dpVersion ) {
+            throw new IllegalArgumentException( String.format("specified pointer '%' has been deallocated and reassigned") );
+        }
+
+        return dataPointer;
     }
 
     private int assignDataRegionPointer( int dataAndHeaderByteCount ) {
@@ -185,5 +253,4 @@ public class MemoryRegion {
 
         return ptr;
     }
-
 }

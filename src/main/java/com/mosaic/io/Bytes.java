@@ -10,6 +10,9 @@ public interface Bytes {
 
     Bytes narrowedView( int fromIndex, int numBytes );
 
+    /**
+     * Total size of the buffer in bytes.
+     */
     int capacity();
 
     byte readByte();
